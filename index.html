@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Google Maps Javascript API</title>
+    <script src="http://maps.google.com/maps/api/js"></script>
+    <style>
+        #myMap {
+            width: 100%;
+            height: 50vw;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="myMap"></div>
+    <button id="map_button">地圖按鍵</button>
+    <script>
+
+        function doFirst() {
+            let area = document.getElementById('myMap');
+            // let position = new google.maps.LatLng(24.9774721,121.1824813);
+            let position = new google.maps.LatLng(25.0336962, 121.5643673);
+
+            let options = {
+                zoom: 19,
+                center: position,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                streetViewControl: false,
+            };
+
+            let map = new google.maps.Map(area, options);
+
+
+            //　單一mark使用
+            // let marker = new google.maps.Marker({
+            //     // map:map,
+            //     // position: position,
+            //     map,
+            //     position,
+            //     title: '看不太清楚的地圖',
+            //     icon: './app.png',
+            //     label: {
+            //         text: '顯示文字',
+            //         color: '#fa0'
+            //     },  //顯示在畫面的文字
+            //     // animation: google.maps.Animation.DROP, //載入時掉落
+            //     animation: google.maps.Animation.BOUNCE,  //不斷跳動
+            //     draggable: true,  //可以拖曳
+            //     zIndex: 2
+            // });
+
+            // let marker1 = new google.maps.Marker({
+            //     // map:map,
+            //     // position: position,
+            //     map,
+            //     position,
+            //     title: '看不太清楚的地圖',
+            //     icon: './app.png',
+            //     label: {
+            //         text: '可以拖曳的目標',
+            //         color: '#fa0'
+            //     },  //顯示在畫面的文字
+            //     // animation: google.maps.Animation.DROP, //載入時掉落
+            //     animation: google.maps.Animation.BOUNCE,  //不斷跳動
+            //     draggable: true,  //可以拖曳
+            //     zIndex: 1
+            // });
+            //　單一mark使用
+
+
+            let markers = [
+                { label: 'A', lat: 25.0336962, lng: 121.5643673, value: false },
+                { label: 'B', lat: 25.0333698, lng: 121.5641564, value: false },
+                { label: 'C', lat: 25.033899, lng: 121.564329, value: false },
+                { label: 'D', lat: 25.0338407, lng: 121.5645269, value: false },
+                { label: 'E', lat: 25.0336377, lng: 121.5645727, value: false }
+            ]
+            let markpoints = [];
+            function addmark(sec) {
+                setTimeout(() => {
+                    markpoints.push(new google.maps.Marker({
+                        map: map,
+                        position: {
+                            lat: markers[sec].lat,
+                            lng: markers[sec].lng
+                        },
+                        draggable: true,  //可以拖曳
+                        label: markers[sec].label,
+                        animation: google.maps.Animation.DROP, //載入時掉落
+                        icon: {
+                            url:'http://www.oxxostudio.tw/img/articles/201801/google-maps-5-marker-click-event-markericon-01.png',
+                            scaledSize:new google.maps.Size(80,80),
+                            },
+                    })); 
+
+                    // 增加事件用
+                    let markeven = markpoints[markpoints.length - 1];
+                    let arr = markers[markpoints.length - 1];
+                    let info = new google.maps.InfoWindow({
+                        content: '<h1>大家好我是' + arr.label + '</h1>'
+                    });
+                    google.maps.event.addListener(info, 'closeclick', function () {
+                        if (!arr.value) {
+                            markeven.setAnimation(google.maps.Animation.BOUNCE);
+                            info.open(map, markeven);
+                            markeven.setIcon('http://www.oxxostudio.tw/img/articles/201801/google-maps-5-marker-click-event-markericon-02.png');
+                        } else {
+                            markeven.setAnimation('?');
+                            info.close();
+                            markeven.setIcon('http://www.oxxostudio.tw/img/articles/201801/google-maps-5-marker-click-event-markericon-01.png');
+                        }
+                        arr.value = !arr.value;
+                    });
+                    markeven.addListener('click', function (e) {
+
+                        if (!arr.value) {
+                            markeven.setAnimation(google.maps.Animation.BOUNCE);
+                            info.open(map, markeven);
+                            markeven.setIcon('http://www.oxxostudio.tw/img/articles/201801/google-maps-5-marker-click-event-markericon-02.png');
+                        } else {
+                            info.close();
+                            markeven.setAnimation('?');
+                            markeven.setIcon('http://www.oxxostudio.tw/img/articles/201801/google-maps-5-marker-click-event-markericon-01.png');
+                        }
+                        arr.value = !arr.value;
+                    })
+                }, sec * 50);
+            }
+            // 清除地圖markers
+            function clearMarkers() {
+                for (var i = 0; i < markpoints.length; i++) {
+                    if (markpoints[i]) {
+                        markpoints[i].setMap(null);
+                    }
+                }
+                markpoints = [];
+            }
+            // 按鈕事件
+            document.getElementById('map_button').addEventListener('click', function (e) {
+                clearMarkers();
+                for (let i = 0; i < markers.length; i++) {
+                    addmark(i);
+                }
+                let aaa = position;
+                let bbb = '';
+                let ccc = '';
+                let ddd = '';
+                let eee = '';
+                let fff = '';
+                let ggg = '';
+                console.log({ aaa, bbb, ccc, ddd, eee, fff, ggg });
+            })
+        }
+        window.addEventListener('load', doFirst);
+
+    </script>
+</body>
+
+</html>
